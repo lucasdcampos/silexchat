@@ -1,0 +1,17 @@
+{
+  "name": "silexchat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev:api": "npm run dev -w apps/api",
+    "dev:client": "npm run dev -w apps/client"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "workspaces": [
+    "apps/api",
+    "apps/client"
+  ]
+}
