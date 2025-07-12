@@ -8,7 +8,7 @@ interface ChatActionsMenuProps {
   onClose: () => void;
 }
 
-export function ChatActionsMenu({ chat, isPinned, onPinToggle, onHide, onClose }: ChatActionsMenuProps) {
+export function ChatActionsMenu({ isPinned, onPinToggle, onHide, onClose }: ChatActionsMenuProps) {
   const handleAction = (action: () => void) => {
     action();
     onClose();
