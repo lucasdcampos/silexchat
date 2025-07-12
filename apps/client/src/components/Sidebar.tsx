@@ -90,7 +90,7 @@ export function Sidebar({ currentUser, chats, isChatsLoading, activeChatId, onSe
             <button onClick={onOpenSettings} className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full transition-colors">
               <SettingsIcon className="h-5 w-5" />
             </button>
-            <button onClick={onLogout} className="text-sm text-gray-400 hover:text-white">
+            <button onClick={onLogout} className="text-sm text-red-400 hover:text-white">
               Log out
             </button>
           </div>
