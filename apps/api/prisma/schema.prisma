@@ -64,7 +64,8 @@ model ChatParticipant {
   chatId   Int
   isHidden Boolean  @default(false)
   joinedAt DateTime @default(now())
-
+  isPinned Boolean  @default(false)
+  
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   chat Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
 

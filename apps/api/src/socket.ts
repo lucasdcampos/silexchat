@@ -41,26 +41,16 @@ function setupConnectionEvents(io: Server) {
       const userChats = await chatRepository.findChatsByUserId(connectedUser.id);
       userChats.forEach(chat => {
         socket.join(`chat:${chat.id}`);
-        console.log(`${connectedUser.username} joined room chat:${chat.id}`);
       });
-
     } catch(e) {
       console.error("Error during socket connection setup:", e);
     }
     
     socket.on('chatMessage', async ({ chatId, content, tempId }) => {
+      console.log("Received 'chatMessage' event with data:", { chatId, content, tempId });
+      
       try {
         const senderId = connectedUser.id;
-
-        const chat = await chatRepository.findById(chatId);
-        if (chat) {
-            for (const participant of chat.participants) {
-                if (participant.userId !== senderId) {
-                    await chatRepository.unhideChat(participant.userId, chatId);
-                }
-            }
-        }
-        
         const newMessage = await messageRepository.create(chatId, senderId, content);
 
         socket.to(`chat:${chatId}`).emit('chatMessage', newMessage);

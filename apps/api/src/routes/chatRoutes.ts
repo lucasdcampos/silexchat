@@ -17,5 +17,7 @@ router.post('/join', asyncHandler(chatController.joinGroup.bind(chatController))
 router.delete('/:chatId/leave', asyncHandler(chatController.leaveGroup.bind(chatController)));
 router.delete('/:chatId', asyncHandler(chatController.hideChat.bind(chatController)));
 router.patch('/groups/:chatId', asyncHandler(chatController.updateGroup.bind(chatController)));
+router.post('/:chatId/pin', asyncHandler(chatController.pinChat.bind(chatController)));
+router.delete('/:chatId/pin', asyncHandler(chatController.unpinChat.bind(chatController)));
 
 export default router;

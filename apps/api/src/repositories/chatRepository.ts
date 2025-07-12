@@ -13,6 +13,8 @@ export interface IChatRepository {
   isUserParticipant(userId: number, chatId: number): Promise<boolean>;
   findById(id: number): Promise<Chat | null>;
   updateGroup(chatId: number, ownerId: number, data: { name?: string; avatarUrl?: string }): Promise<Chat>;
+  pinChat(userId: number, chatId: number): Promise<void>;
+  unpinChat(userId: number, chatId: number): Promise<void>;
 }
 
 const includeChatWithParticipants = {
@@ -199,5 +201,23 @@ export class ChatRepository implements IChatRepository {
       where: { userId_chatId: { userId, chatId } },
     });
     return !!participant;
+  }
+
+  async pinChat(userId: number, chatId: number): Promise<void> {
+    await prisma.chatParticipant.update({
+      where: {
+        userId_chatId: { userId, chatId },
+      },
+      data: { isPinned: true },
+    });
+  }
+
+  async unpinChat(userId: number, chatId: number): Promise<void> {
+    await prisma.chatParticipant.update({
+      where: {
+        userId_chatId: { userId, chatId },
+      },
+      data: { isPinned: false },
+    });
   }
 }

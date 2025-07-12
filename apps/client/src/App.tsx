@@ -214,6 +214,49 @@ export default function App() {
     }
   };
 
+  const handlePinChat = async (chatId: number, pinState: boolean) => {
+    const token = localStorage.getItem('silex_token');
+    if (!token) return;
+
+    const endpoint = pinState ? `/api/chats/${chatId}/pin` : `/api/chats/${chatId}/pin`;
+    const method = pinState ? 'POST' : 'DELETE';
+
+    setChats(prev => prev.map(c => {
+      if (c.id === chatId) {
+        const participantIndex = c.participants.findIndex(p => p.userId === currentUser!.id);
+        if (participantIndex !== -1) {
+          const newParticipants = [...c.participants];
+          newParticipants[participantIndex].isPinned = pinState;
+          return { ...c, participants: newParticipants };
+        }
+      }
+      return c;
+    }));
+
+    try {
+      const res = await fetch(`${API_URL}${endpoint}`, {
+        method,
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        setChats(prev => prev.map(c => {
+          if (c.id === chatId) {
+            const participantIndex = c.participants.findIndex(p => p.userId === currentUser!.id);
+            if (participantIndex !== -1) {
+              const newParticipants = [...c.participants];
+              newParticipants[participantIndex].isPinned = !pinState;
+              return { ...c, participants: newParticipants };
+            }
+          }
+          return c;
+        }));
+        console.error("Failed to update pin status on server");
+      }
+    } catch (error) {
+      console.error("Error pinning/unpinning chat:", error);
+    }
+  };
+
   return (
     <div className="flex h-screen w-screen bg-gray-900 text-white font-sans">
       <Sidebar
@@ -227,10 +270,12 @@ export default function App() {
         onHideChat={handleHideChat}
         onOpenSettings={() => setIsSettingsModalOpen(true)}
         onOpenProfile={handleOpenProfile}
+        onPinChat={handlePinChat}
       />
       <main className="flex-1 flex flex-col">
         {activeChat && currentUser && socket ? (
           <ChatView
+            key={activeChat.id}
             chat={activeChat}
             currentUser={currentUser}
             socket={socket}

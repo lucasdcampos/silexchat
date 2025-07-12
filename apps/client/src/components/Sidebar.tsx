@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { User } from '../models/user';
 import { Avatar } from './Avatar';
 import type { Chat } from '../models/chat';
+import { ChatActionsMenu } from '../views/ChatActionsMenu';
 
-const XIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="18" y1="6" x2="6" y2="18"></line>
-      <line x1="6" y1="6" x2="18" y2="18"></line>
-    </svg>
+const MoreIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+  </svg>
 );
 
 const SettingsIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -16,11 +16,17 @@ const SettingsIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+const PinIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 17v5" /><path d="M12 7V2" /><path d="M17 12H7" /><path d="M22 12H2" /><path d="m15 15-3-3-3 3" /><path d="m9 9 3 3 3-3" />
+  </svg>
+);
+
 const getChatDisplayData = (chat: Chat, currentUserId: number) => {
   if (chat.type === 'GROUP') {
     return { name: chat.name || 'Group', avatarUrl: chat.avatarUrl };
   }
-  const otherParticipant = chat.participants.find(p => p.user.id !== currentUserId);
+  const otherParticipant = chat.participants.find(p => p.userId !== currentUserId);
   return {
     name: otherParticipant?.user.username || 'Direct Message',
     avatarUrl: otherParticipant?.user.avatarUrl,
@@ -36,11 +42,45 @@ interface SidebarProps {
   onNewChat: () => void;
   onLogout: () => void;
   onHideChat: (chatId: number) => void;
+  onPinChat: (chatId: number, isPinned: boolean) => void;
   onOpenSettings: () => void;
   onOpenProfile: (user: User) => void;
 }
 
-export function Sidebar({ currentUser, chats, isChatsLoading, activeChatId, onSelectChat, onNewChat, onLogout, onHideChat, onOpenSettings, onOpenProfile }: SidebarProps) {
+export function Sidebar({ 
+  currentUser, 
+  chats, 
+  isChatsLoading, 
+  activeChatId, onSelectChat, 
+  onNewChat, onLogout, onHideChat, 
+  onOpenSettings, 
+  onOpenProfile,
+  onPinChat }: SidebarProps) {
+    
+  const [menuOpenForChat, setMenuOpenForChat] = useState<number | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpenForChat(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuRef]);
+  
+  const sortedChats = [...chats].sort((a, b) => {
+    const aParticipant = a.participants.find(p => p.userId === currentUser?.id);
+    const bParticipant = b.participants.find(p => p.userId === currentUser?.id);
+    const aIsPinned = aParticipant?.isPinned || false;
+    const bIsPinned = bParticipant?.isPinned || false;
+
+    if (aIsPinned && !bIsPinned) return -1;
+    if (!aIsPinned && bIsPinned) return 1;
+    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+  });
+
   return (
     <aside className="w-80 bg-gray-800 flex flex-col p-3">
       <button onClick={onNewChat} className="w-full py-2 mb-4 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors">
@@ -52,9 +92,11 @@ export function Sidebar({ currentUser, chats, isChatsLoading, activeChatId, onSe
           <p className="text-gray-400 text-sm px-2">Loading chats...</p>
         ) : (
           <ul>
-            {chats.map(chat => {
+            {sortedChats.map(chat => {
               if (!currentUser) return null;
               const displayData = getChatDisplayData(chat, currentUser.id);
+              const participantData = chat.participants.find(p => p.userId === currentUser.id);
+              const isPinned = participantData?.isPinned || false;
               return (
                 <li key={chat.id} 
                     className={`group flex items-center justify-between p-2 rounded-md cursor-pointer hover:bg-gray-700 ${activeChatId === chat.id ? 'bg-gray-700' : ''}`}
@@ -62,16 +104,28 @@ export function Sidebar({ currentUser, chats, isChatsLoading, activeChatId, onSe
                   <div className="flex items-center gap-3 flex-1 truncate">
                     <Avatar avatarUrl={displayData.avatarUrl} username={displayData.name} size="sm" />
                     <span className="flex-1 truncate">{displayData.name}</span>
+                    {isPinned && <PinIcon className="h-4 w-4 text-gray-400 flex-shrink-0" />}
                   </div>
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onHideChat(chat.id);
-                    }}
-                    className="p-1 rounded-full text-gray-500 hover:bg-gray-600 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity ml-2 flex-shrink-0"
-                    aria-label={`Hide chat`}>
-                      <XIcon className="h-4 w-4" />
-                  </button>
+                  <div className="relative" ref={menuOpenForChat === chat.id ? menuRef : null}>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMenuOpenForChat(menuOpenForChat === chat.id ? null : chat.id);
+                      }}
+                      className="p-1 rounded-full text-gray-500 hover:bg-gray-600 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity ml-2 flex-shrink-0"
+                      aria-label={`Chat options`}>
+                        <MoreIcon className="h-4 w-4" />
+                    </button>
+                    {menuOpenForChat === chat.id && (
+                      <ChatActionsMenu 
+                        chat={chat}
+                        isPinned={isPinned}
+                        onPinToggle={() => onPinChat(chat.id, !isPinned)}
+                        onHide={() => onHideChat(chat.id)}
+                        onClose={() => setMenuOpenForChat(null)}
+                      />
+                    )}
+                  </div>
                 </li>
               );
             })}

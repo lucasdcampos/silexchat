@@ -82,6 +82,30 @@ export class ChatController {
     return res.status(204).send();
   }
 
+  public pinChat = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const chatId = parseInt(req.params.chatId, 10);
+      const userId = (req as any).user.id;
+      await this.chatRepository.pinChat(userId, chatId);
+      return res.status(204).send();
+    } catch (error) {
+      console.error('Error pinning chat:', error);
+      return res.status(500).json({ message: 'Internal server error.' });
+    }
+  }
+
+  public unpinChat = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const chatId = parseInt(req.params.chatId, 10);
+      const userId = (req as any).user.id;
+      await this.chatRepository.unpinChat(userId, chatId);
+      return res.status(204).send();
+    } catch (error) {
+      console.error('Error unpinning chat:', error);
+      return res.status(500).json({ message: 'Internal server error.' });
+    }
+  }
+
   public updateGroup = async (req: Request, res: Response): Promise<Response> => {
     try {
       const chatId = parseInt(req.params.chatId, 10);
