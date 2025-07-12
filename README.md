@@ -1,6 +1,9 @@
 # Silex Chat
 
 > Disclaimer: This project is currently under heavy development. Features, architecture, and the database schema are subject to change without notice.
+<p align=center>
+    <img width="1004" height="603" alt="image" src="https://github.com/user-attachments/assets/4c8f36ad-288e-44ca-a04c-cccd78ae5cdf" />
+</p>
 
 ## About The Project
 
