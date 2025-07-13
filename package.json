@@ -5,13 +5,15 @@
   "main": "index.js",
   "scripts": {
     "dev:api": "npm run dev -w apps/api",
-    "dev:client": "npm run dev -w apps/client"
+    "dev:client": "npm run dev -w apps/client",
+    "dev:website": "npm run dev -w apps/website"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "workspaces": [
     "apps/api",
-    "apps/client"
+    "apps/client",
+    "apps/website"
   ]
 }
