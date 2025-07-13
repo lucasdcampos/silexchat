@@ -24,7 +24,7 @@ const Header: React.FC = () => {
         </div>
 
         <a 
-          href="https://silexchat.vercel.app"
+          href="https://app/silex.lucasof.com"
           className="hidden md:inline-block bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-5 rounded-lg transition-colors"
         >
           Open Silex

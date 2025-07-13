@@ -23,7 +23,7 @@ const App: React.FC = () => {
           </p>
           <div className="flex flex-col items-center">
             <a
-              href="https://silexchat.vercel.app"
+              href="https://app/silex.lucasof.com"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg text-lg transition-transform transform hover:scale-105 shadow-lg shadow-emerald-500/20"
