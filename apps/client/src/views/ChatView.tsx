@@ -52,7 +52,7 @@ export function ChatView({ chat, currentUser, socket, onClose, onOpenProfile }: 
 
     const fetchHistory = async () => {
       try {
-        const response = await api.get(`/api/messages/${chat.id}`);
+        const response = await api.get(`/messages/${chat.id}`);
         setMessages(response.data);
       } catch (error) {
         console.error('Failed to fetch chat history', error);
@@ -121,7 +121,7 @@ export function ChatView({ chat, currentUser, socket, onClose, onOpenProfile }: 
         return;
     }
     try {
-      await api.delete(`/api/messages/${id}`);
+      await api.delete(`/messages/${id}`);
       setMessages(prev => prev.filter(m => m.id !== id));
     } catch (error: any) {
       console.error("Error deleting message:", error.response?.data?.message || error.message);

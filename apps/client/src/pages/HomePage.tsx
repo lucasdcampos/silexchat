@@ -25,7 +25,7 @@ export function HomePage({ onStartDM, onLogout, onOpenNewChatModal }: HomePagePr
     }
 
     try {
-      const response = await api.get<User>(`/api/users/username/${searchUsername}`);
+      const response = await api.get<User>(`/users/username/${searchUsername}`);
       onStartDM(response.data);
     } catch (err: any) {
       setError(err.response?.data?.message || `User "${searchUsername}" not found.`);

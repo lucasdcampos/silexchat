@@ -34,7 +34,7 @@ export function SettingsModal({ isOpen, onClose, currentUser, onUpdateSuccess }:
     setError('');
     
     try {
-      const { data } = await api.patch('/api/users/me', {
+      const { data } = await api.patch('/users/me', {
         username,
         avatarUrl,
         about,

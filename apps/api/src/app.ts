@@ -18,9 +18,9 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 app.use('/', rootRoutes);
-app.use('/api/auth', authRoutes)
-app.use('/api/users', userRoutes);
-app.use('/api/chats', chatRoutes);
-app.use('/api/messages', messageRoutes);
+app.use('/auth', authRoutes)
+app.use('/users', userRoutes);
+app.use('/chats', chatRoutes);
+app.use('/messages', messageRoutes);
 
 export { app };

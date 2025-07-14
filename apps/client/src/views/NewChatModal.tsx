@@ -23,15 +23,15 @@ export function NewChatModal({ isOpen, onClose, onChatStarted }: NewChatModalPro
 
     switch (view) {
       case 'dm':
-        endpoint = `/api/chats/dm`;
+        endpoint = `/chats/dm`;
         body = { partnerUsername: dmUsername };
         break;
       case 'create':
-        endpoint = `/api/chats/groups`;
+        endpoint = `/chats/groups`;
         body = { name: groupName, avatarUrl: groupAvatarUrl };
         break;
       case 'join':
-        endpoint = `/api/chats/join`;
+        endpoint = `/chats/join`;
         body = { inviteCode };
         break;
     }

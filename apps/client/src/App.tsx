@@ -74,7 +74,7 @@ export default function App() {
       const fetchChats = async () => {
         try {
           setIsChatsLoading(true);
-          const { data } = await api.get('/api/chats');
+          const { data } = await api.get('/chats');
           setChats(data);
         } catch (error) {
           console.error("Error fetching chats:", error);
@@ -152,7 +152,7 @@ export default function App() {
   
   const handleHideChat = async (chatId: number) => {
     try {
-      await api.delete(`/api/chats/${chatId}`);
+      await api.delete(`/chats/${chatId}`);
       setChats(prev => prev.filter(c => c.id !== chatId));
       if (activeChat?.id === chatId) {
         setActiveChat(null);
@@ -222,7 +222,7 @@ export default function App() {
     }));
 
     try {
-      const endpoint = `/api/chats/${chatId}/pin`;
+      const endpoint = `/chats/${chatId}/pin`;
       if (pinState) {
         await api.post(endpoint);
       } else {

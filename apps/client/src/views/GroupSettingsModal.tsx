@@ -30,7 +30,7 @@ export function GroupSettingsModal({ isOpen, onClose, chat, onUpdateSuccess }: G
     setError('');
     
     try {
-      const { data } = await api.patch(`/api/chats/groups/${chat.id}`, {
+      const { data } = await api.patch(`/chats/groups/${chat.id}`, {
         name,
         avatarUrl,
       });

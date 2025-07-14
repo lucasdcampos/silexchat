@@ -26,7 +26,7 @@ export function AuthPage({ onLoginSuccess }: AuthPageProps) {
     const publicKey = `pub_key_for_${username}`;
 
     try {
-      await api.post('/api/auth/register', { username, email, password, publicKey });
+      await api.post('/auth/register', { username, email, password, publicKey });
       await handleLogin(e, true);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Registration failed.');
@@ -39,7 +39,7 @@ export function AuthPage({ onLoginSuccess }: AuthPageProps) {
     setLoading(true);
     setError('');
     try {
-      const { data } = await api.post('/api/auth/login', { email, password });
+      const { data } = await api.post('/auth/login', { email, password });
       localStorage.setItem('silex_token', data.accessToken);
       onLoginSuccess();
     } catch (err: any) {
