@@ -5,7 +5,7 @@ function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900/50 border-t border-gray-800 p-6">
+    <footer className="bg-gray-800/50 border-t border-gray-800 p-6">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center text-sm text-gray-500">
         <p className="mb-4 sm:mb-0">&copy; {currentYear} <a className="text-emerald-400" href='/'>Silex Chat</a>. All Rights Reserved.</p>
         <div className="flex items-center space-x-6">

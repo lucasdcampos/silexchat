@@ -36,6 +36,8 @@ model User {
   status       Status    @default(OFFLINE)
   createdAt    DateTime  @default(now())
 
+  currentHashedRefreshToken String?
+
   ownedChats   Chat[]            @relation("OwnedChats")
   participants ChatParticipant[]
   messages     Message[]
@@ -73,18 +75,39 @@ model ChatParticipant {
 }
 
 model Message {
-  id        Int      @id @default(autoincrement())
-  content   String
-  createdAt DateTime @default(now())
+  id        Int       @id @default(autoincrement())
+  content   String?
+  createdAt DateTime  @default(now())
 
   senderId  Int
   chatId    Int
-  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
-  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  sender    User      @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  chat      Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
 
-  readBy    ReadReceipt[]
+  attachments Attachment[]
+  readBy     ReadReceipt[]
 
   @@index([chatId])
+}
+
+enum AttachmentType {
+  IMAGE
+  VIDEO
+  FILE
+}
+
+model Attachment {
+  id        Int      @id @default(autoincrement())
+  messageId Int
+  type      AttachmentType
+  url       String
+  filename  String
+  mimeType  String
+  size      Int
+
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@index([messageId])
 }
 
 model ReadReceipt {

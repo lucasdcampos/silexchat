@@ -6,7 +6,7 @@ interface MessageActionsProps {
 
 export function MessageActions({ messageId, onCopy, onDelete }: MessageActionsProps) {
   return (
-    <div className="absolute top-0 right-full mr-2 bg-gray-900 rounded-md shadow-lg p-1 z-10">
+    <div className="absolute top-0 right-full mr-2 bg-gray-800 rounded-md shadow-lg p-1 z-10">
       <ul className="text-sm text-white">
         <li>
           <button

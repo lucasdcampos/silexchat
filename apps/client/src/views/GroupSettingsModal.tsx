@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { Chat } from '../models/chat';
 import { Avatar } from '../components/Avatar';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import api from '../api';
 
 interface GroupSettingsModalProps {
   isOpen: boolean;
@@ -30,25 +29,17 @@ export function GroupSettingsModal({ isOpen, onClose, chat, onUpdateSuccess }: G
     setLoading(true);
     setError('');
     
-    const token = localStorage.getItem('silex_token');
     try {
-      const res = await fetch(`${API_URL}/api/chats/groups/${chat.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ name, avatarUrl }),
+      const { data } = await api.patch(`/api/chats/groups/${chat.id}`, {
+        name,
+        avatarUrl,
       });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Failed to update group settings.');
 
       onUpdateSuccess(data);
       onClose();
 
     } catch (err: any) {
-      setError(err.message);
+      setError(err.response?.data?.message || 'Failed to update group settings.');
     } finally {
       setLoading(false);
     }
@@ -68,7 +59,7 @@ export function GroupSettingsModal({ isOpen, onClose, chat, onUpdateSuccess }: G
               value={avatarUrl}
               onChange={e => setAvatarUrl(e.target.value)}
               placeholder="Group Avatar URL"
-              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
           <div>
@@ -79,7 +70,7 @@ export function GroupSettingsModal({ isOpen, onClose, chat, onUpdateSuccess }: G
               onChange={e => setName(e.target.value)}
               placeholder="Group Name"
               required
-              className="w-full mt-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full mt-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
           {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -87,7 +78,7 @@ export function GroupSettingsModal({ isOpen, onClose, chat, onUpdateSuccess }: G
             <button type="button" onClick={onClose} className="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700" disabled={loading}>
               Cancel
             </button>
-            <button type="submit" className="px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700" disabled={loading}>
+            <button type="submit" className="px-4 py-2 rounded-md bg-emerald-500 hover:bg-emerald-600" disabled={loading}>
               {loading ? 'Saving...' : 'Save Changes'}
             </button>
           </div>

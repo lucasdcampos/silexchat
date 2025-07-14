@@ -31,7 +31,7 @@ export function ProfileModal({ data, currentUser, onClose, onOpenGroupSettings }
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center z-50" onClick={onClose}>
+    <div className="fixed inset-0 bg-gray-800/70 backdrop-blur-sm flex items-center justify-center z-50" onClick={onClose}>
       <div className="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-sm text-center" onClick={e => e.stopPropagation()}>
         <div className="flex flex-col items-center gap-4">
           <div className="relative">
@@ -71,7 +71,7 @@ export function ProfileModal({ data, currentUser, onClose, onOpenGroupSettings }
           </button>
         )}
 
-        <button onClick={onClose} className="mt-2 w-full px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700">
+        <button onClick={onClose} className="mt-2 w-full px-4 py-2 rounded-md bg-emerald-500 hover:bg-emerald-600">
           Close
         </button>
       </div>

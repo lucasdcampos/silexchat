@@ -15,7 +15,7 @@ export function ChatActionsMenu({ isPinned, onPinToggle, onHide, onClose }: Chat
   };
 
   return (
-    <div className="absolute top-0 right-8 bg-gray-900 rounded-md shadow-lg p-1 z-20 w-40">
+    <div className="absolute top-0 right-8 bg-gray-800 rounded-md shadow-lg p-1 z-20 w-40">
       <ul className="text-sm text-white">
         <li>
           <button

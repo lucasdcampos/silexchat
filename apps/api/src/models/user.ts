@@ -10,6 +10,7 @@ export interface User {
   about?: string | null;
   status: Status;
   createdAt: Date;
+  currentHashedRefreshToken?: string | null;
 }
 
-export type PublicUser = Omit<User, 'passwordHash' | 'email' | 'publicKey'>;
+export type PublicUser = Omit<User, 'passwordHash' | 'email' | 'publicKey' | 'currentHashedRefreshToken'>;

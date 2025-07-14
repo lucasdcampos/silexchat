@@ -82,8 +82,8 @@ export function Sidebar({
   });
 
   return (
-    <aside className="w-80 bg-gray-800 flex flex-col p-3">
-      <button onClick={onNewChat} className="w-full py-2 mb-4 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors">
+    <aside className="w-80 bg-gray-900 flex flex-col p-3">
+      <button onClick={onNewChat} className="w-full py-2 mb-4 text-white bg-emerald-500 rounded-md hover:bg-emerald-600 transition-colors">
         New Chat
       </button>
       <div className="flex-1 overflow-y-auto">

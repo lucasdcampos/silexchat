@@ -8,12 +8,19 @@ export interface IUserRepository {
   findByEmail(email: string): Promise<User | null>;
   findByUsername(username: string): Promise<User | null>;
   findAll(): Promise<PublicUser[]>;
-  update(id: number, data: { username?: string; avatarUrl?: string; about?: string; status?: Status }): Promise<User>;
+  update(id: number, data: { 
+    username?: string; 
+    avatarUrl?: string; 
+    about?: string; 
+    status?: Status, 
+    currentHashedRefreshToken?: string | null;}
+  ): Promise<User>;
   updateStatus(id: number, status: Status): Promise<User>;
+  findFullUserById(id: number): Promise<User | null>;
 }
 
 export class UserRepository implements IUserRepository {
-  async create(data: Omit<User, 'id' | 'createdAt' | 'status'>): Promise<User> {
+  async create(data: Omit<User, 'id' | 'createdAt' | 'status' | 'currentHashedRefreshToken'>): Promise<User> {
     return prisma.user.create({ data });
   }
 
@@ -30,6 +37,10 @@ export class UserRepository implements IUserRepository {
         email: true,
       },
     });
+  }
+
+  async findFullUserById(id: number): Promise<User | null> {
+    return prisma.user.findUnique({ where: { id } });
   }
 
   async findByEmail(email: string): Promise<User | null> {
@@ -53,7 +64,7 @@ export class UserRepository implements IUserRepository {
     });
   }
 
-  async update(id: number, data: { username?: string; avatarUrl?: string; about?: string; status?: Status }): Promise<User> {
+  async update(id: number, data: { username?: string; avatarUrl?: string; about?: string; status?: Status; currentHashedRefreshToken?: string | null; }): Promise<User> {
     return prisma.user.update({
       where: { id },
       data,

@@ -5,7 +5,7 @@ import Footer from './components/Footer';
 
 const App: React.FC = () => {
   return (
-    <div className="bg-gray-900 text-white min-h-screen flex flex-col font-sans">
+    <div className="bg-gray-800 text-white min-h-screen flex flex-col font-sans">
       <Header />
       <main className="flex-grow flex items-center justify-center p-4">
         <div className="text-center max-w-2xl mx-auto">

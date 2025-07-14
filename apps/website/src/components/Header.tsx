@@ -9,7 +9,7 @@ const Header: React.FC = () => {
     `transition-colors ${isActive ? 'text-emerald-400' : 'text-gray-300 hover:text-emerald-400'}`;
 
   return (
-    <header className="bg-gray-900/80 backdrop-blur-sm sticky top-0 z-50 border-b border-gray-800">
+    <header className="bg-gray-800/80 backdrop-blur-sm sticky top-0 z-50 border-b border-gray-800">
       <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
         {/* Logo */}
         <Link to="/" className="text-2xl font-bold text-white">

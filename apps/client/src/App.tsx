@@ -10,6 +10,7 @@ import { ChatView } from "./views/ChatView";
 import { ProfileModal } from "./views/ProfileModal";
 import { SettingsModal } from "./views/SettingsModal";
 import { GroupSettingsModal } from "./views/GroupSettingsModal";
+import api from "./api";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -60,19 +61,21 @@ export default function App() {
     const newSocket = io(API_URL, { auth: { token } });
     setSocket(newSocket);
 
+    newSocket.on('connect_error', (err) => {
+      if (err.message.includes("Authentication error")) {
+        console.error("Socket connection failed, logging out:", err.message);
+        handleLogout();
+      }
+    });
+
     const onConnect = () => {
       console.log('Socket connected, fetching initial data...');
       
       const fetchChats = async () => {
         try {
           setIsChatsLoading(true);
-          const res = await fetch(`${API_URL}/api/chats`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          if (res.ok) {
-            const data = await res.json();
-            setChats(data);
-          }
+          const { data } = await api.get('/api/chats');
+          setChats(data);
         } catch (error) {
           console.error("Error fetching chats:", error);
         } finally {
@@ -148,25 +151,14 @@ export default function App() {
   };
   
   const handleHideChat = async (chatId: number) => {
-    const token = localStorage.getItem('silex_token');
-    if (!token) return;
-
     try {
-      const res = await fetch(`${API_URL}/api/chats/${chatId}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
-
-      if (res.ok) {
-        setChats(prev => prev.filter(c => c.id !== chatId));
-        if (activeChat?.id === chatId) {
-          setActiveChat(null);
-        }
-      } else {
-        console.error("Failed to hide chat on server");
+      await api.delete(`/api/chats/${chatId}`);
+      setChats(prev => prev.filter(c => c.id !== chatId));
+      if (activeChat?.id === chatId) {
+        setActiveChat(null);
       }
-    } catch (error) {
-      console.error("Error hiding chat:", error);
+    } catch (error: any) {
+      console.error("Error hiding chat:", error.response?.data?.message || error.message);
     }
   };
 
@@ -215,11 +207,7 @@ export default function App() {
   };
 
   const handlePinChat = async (chatId: number, pinState: boolean) => {
-    const token = localStorage.getItem('silex_token');
-    if (!token) return;
-
-    const endpoint = pinState ? `/api/chats/${chatId}/pin` : `/api/chats/${chatId}/pin`;
-    const method = pinState ? 'POST' : 'DELETE';
+    const originalChats = chats;
 
     setChats(prev => prev.map(c => {
       if (c.id === chatId) {
@@ -234,31 +222,20 @@ export default function App() {
     }));
 
     try {
-      const res = await fetch(`${API_URL}${endpoint}`, {
-        method,
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
-      if (!res.ok) {
-        setChats(prev => prev.map(c => {
-          if (c.id === chatId) {
-            const participantIndex = c.participants.findIndex(p => p.userId === currentUser!.id);
-            if (participantIndex !== -1) {
-              const newParticipants = [...c.participants];
-              newParticipants[participantIndex].isPinned = !pinState;
-              return { ...c, participants: newParticipants };
-            }
-          }
-          return c;
-        }));
-        console.error("Failed to update pin status on server");
+      const endpoint = `/api/chats/${chatId}/pin`;
+      if (pinState) {
+        await api.post(endpoint);
+      } else {
+        await api.delete(endpoint);
       }
     } catch (error) {
       console.error("Error pinning/unpinning chat:", error);
+      setChats(originalChats);
     }
   };
 
   return (
-    <div className="flex h-screen w-screen bg-gray-900 text-white font-sans">
+    <div className="flex h-screen w-screen bg-gray-800 text-white font-sans">
       <Sidebar
         isChatsLoading={isChatsLoading}
         currentUser={currentUser}
@@ -283,7 +260,7 @@ export default function App() {
             onOpenProfile={handleOpenProfile}
           />
         ) : (
-          <WelcomeView />
+          <WelcomeView currentUser={currentUser} />
         )}
       </main>
       <NewChatModal

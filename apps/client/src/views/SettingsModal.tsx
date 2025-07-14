@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { User } from '../models/user';
 import { Avatar } from '../components/Avatar';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import api from '../api';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -34,25 +33,19 @@ export function SettingsModal({ isOpen, onClose, currentUser, onUpdateSuccess }:
     setLoading(true);
     setError('');
     
-    const token = localStorage.getItem('silex_token');
     try {
-      const res = await fetch(`${API_URL}/api/users/me`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ username, avatarUrl, about, status }),
+      const { data } = await api.patch('/api/users/me', {
+        username,
+        avatarUrl,
+        about,
+        status,
       });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Failed to update settings.');
 
       onUpdateSuccess(data.user, data.token);
       onClose();
 
     } catch (err: any) {
-      setError(err.message);
+      setError(err.response?.data?.message || 'Failed to update settings.');
     } finally {
       setLoading(false);
     }
@@ -61,7 +54,7 @@ export function SettingsModal({ isOpen, onClose, currentUser, onUpdateSuccess }:
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-gray-800/70 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md">
         <h2 className="text-xl font-bold mb-6">User Settings</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -72,7 +65,7 @@ export function SettingsModal({ isOpen, onClose, currentUser, onUpdateSuccess }:
               value={avatarUrl}
               onChange={e => setAvatarUrl(e.target.value)}
               placeholder="Avatar URL"
-              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
           <div>
@@ -83,7 +76,7 @@ export function SettingsModal({ isOpen, onClose, currentUser, onUpdateSuccess }:
               onChange={e => setUsername(e.target.value)}
               placeholder="Username"
               required
-              className="w-full mt-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full mt-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
           <div>
@@ -93,7 +86,7 @@ export function SettingsModal({ isOpen, onClose, currentUser, onUpdateSuccess }:
               onChange={e => setAbout(e.target.value)}
               placeholder="Tell us about yourself..."
               rows={3}
-              className="w-full mt-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full mt-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
            <div>
@@ -101,7 +94,7 @@ export function SettingsModal({ isOpen, onClose, currentUser, onUpdateSuccess }:
             <select
               value={status}
               onChange={e => setStatus(e.target.value as 'ONLINE' | 'AFK' | 'OFFLINE')}
-              className="w-full mt-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full mt-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >
               <option value="ONLINE">Online</option>
               <option value="AFK">Away</option>
@@ -112,7 +105,7 @@ export function SettingsModal({ isOpen, onClose, currentUser, onUpdateSuccess }:
             <button type="button" onClick={onClose} className="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700" disabled={loading}>
               Cancel
             </button>
-            <button type="submit" className="px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700" disabled={loading}>
+            <button type="submit" className="px-4 py-2 rounded-md bg-emerald-500 hover:bg-emerald-600" disabled={loading}>
               {loading ? 'Saving...' : 'Save Changes'}
             </button>
           </div>

@@ -4,7 +4,7 @@ import Header from '../components/Header';
 
 const TermsAndPrivacyPage: React.FC = () => {
   return (
-    <div className="bg-gray-900 text-white min-h-screen flex flex-col font-sans">
+    <div className="bg-gray-800 text-white min-h-screen flex flex-col font-sans">
         <Header />
       <main className="flex-grow container mx-auto px-6 py-12 md:px-12">
         <div className="max-w-4xl mx-auto">
